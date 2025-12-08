@@ -1,4 +1,3 @@
-import { File } from "buffer";
 import fs from 'fs/promises';
 
 class Rotation {
@@ -31,22 +30,16 @@ class Rotation {
 }
 
 class Dial {
-    static config = {
-        dailMin: 0,
-        dailMax: 100,
-        dailStart: 50,
-    }
-
     constructor(
-        public currentNumber: number = Dial.config.dailStart
+        public currentNumber: number = 50,
+        private readonly dialMin: number = 0,
+        private readonly dialMax: number = 100
     ) { }
 
     rotate(rotation: Rotation): number {
         let logString = `${this.currentNumber} + ${rotation.asReadableString()}`;
-        this.currentNumber = (this.currentNumber + rotation.rotationValue()) % (Dial.config.dailMax);
-        if (this.currentNumber < Dial.config.dailMin) {
-            this.currentNumber += (Dial.config.dailMax);
-        }
+
+        this.currentNumber = ((this.currentNumber + rotation.rotationValue()) % this.dialMax + this.dialMax) % this.dialMax;
 
         logString += ` = ${this.currentNumber}`;
         console.log(logString);
@@ -59,7 +52,7 @@ class Dial {
     }
 }
 
-function decriptPassword(rotations: Rotation[]): number {
+function decryptPassword(rotations: Rotation[]): number {
     const dial: Dial = new Dial();
     let password: number = 0;
 
@@ -72,10 +65,11 @@ function decriptPassword(rotations: Rotation[]): number {
 }
 
 async function day1() {
-    const input: string[] = await fs.readFile('./inputs/day1.txt', 'utf-8').then(data => data.split('\n').filter(line => line.length > 0));
+    const input: string[] = await fs.readFile('./inputs/day1.txt', 'utf-8')
+        .then(data => data.split('\n').filter(line => line.trim().length > 0));
 
     const rotations: Rotation[] = input.map(line => Rotation.fromCode(line));
-    const password = decriptPassword(rotations);
+    const password = decryptPassword(rotations);
 
     console.log(`Password: ${password}`);
 }
