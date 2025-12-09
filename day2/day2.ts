@@ -1,7 +1,4 @@
 import { readFile } from "../utils/fileutils";
-import { Logger } from "../utils/logger";
-
-const logger = new Logger(true);
 
 interface Range{
     start: number;
