@@ -1,0 +1,16 @@
+{
+  "name": "advent-of-code-2025",
+  "version": "1.0.0",
+  "description": "Advent of Code 2025 Solutions",
+  "type": "module",
+  "scripts": {
+    "day1": "tsx day1/day1.ts",
+    "fetch": "tsx utils.fetch.ts"
+  },
+  "dependencies": {
+    "tsx": "^4.19.2"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1"
+  }
+}
