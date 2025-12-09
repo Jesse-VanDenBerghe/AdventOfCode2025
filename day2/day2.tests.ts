@@ -15,7 +15,7 @@ async function runTests() {
     });
 
     testCase("check invalid Ids", () => {
-        const invalidIds = ["11", "22", "1010", "1188511885"];
+        const invalidIds = ["11", "22", "1010", "1188511885", "12121212", "824824824"];
 
         for (const id of invalidIds) {
             const result = isValidId(Number(id));
@@ -47,7 +47,7 @@ async function runTests() {
 
             const invalidIdSum = calculateInvalidIdSum(ranges);
 
-            assert(invalidIdSum === 1227775554, `Expected sum of invalid IDs to be 1227775554, got ${invalidIdSum}`);
+            assert(invalidIdSum === 4174379265, `Expected sum of invalid IDs to be 4174379265, got ${invalidIdSum}`);
         });
     });
 }

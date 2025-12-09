@@ -1,4 +1,7 @@
 import { readFile } from "../utils/fileutils";
+import { Logger } from "../utils/logger";
+
+const logger = new Logger(true);
 
 interface Range{
     start: number;
@@ -8,12 +11,17 @@ interface Range{
 export function isValidId(id: number): boolean {
     const cleanedId = id.toString()
 
-    if (cleanedId.length === 0 || cleanedId.length % 2 !== 0) return true;
+    if (cleanedId.length === 0) return true;
 
-    const firstHalf = cleanedId.slice(0, cleanedId.length / 2);
-    const secondHalf = cleanedId.slice(cleanedId.length / 2);
+    for (let maskIndex = 1; maskIndex <= cleanedId.length / 2; maskIndex++) {
+        const mask = cleanedId.slice(0, maskIndex)
 
-    if (firstHalf === secondHalf) return false;
+        if (cleanedId.length % mask.length !== 0) continue;
+
+        const repeatedMask = mask.repeat(cleanedId.length / mask.length);
+
+        if (repeatedMask === cleanedId) return false;
+    }
 
     return true;
 }
@@ -45,7 +53,7 @@ export function calculateInvalidIdSum(ranges: Range[]): number {
     return invalidIds.reduce((sum, id) => sum + id, 0);
 }
 
-async function day2Part1() {
+async function day2() {
     readFile('day2/day2.input.txt').then((data) => {
         const ranges = data.split(',').map(rangeStr => parseRange(rangeStr));
 
@@ -55,4 +63,4 @@ async function day2Part1() {
     });
 }
 
-day2Part1();
+day2();
