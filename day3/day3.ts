@@ -1,15 +1,27 @@
 import { readFile } from "../utils/fileutils";
+import { Logger } from "../utils/logger";
+
+const logger = new Logger(false);
 
 export function maxJoltageForBank(bank: String): number {
     const joltages = bank.split('').map(char => parseInt(char, 10));
+    const maxEnabledBatteries = 12;
 
-    const maxJoltage = Math.max(...joltages.slice(0, joltages.length - 1));
-    const maxJoltageIndex = joltages.indexOf(maxJoltage);
+    let options = joltages;
+    let totalJoltage = "";
 
-    const otherOptions = joltages.slice(maxJoltageIndex + 1, joltages.length );
-    const maxSecondJoltage = Math.max(...otherOptions);
+    for (let i = maxEnabledBatteries - 1; i >= 0; i--) {
+        const maxJoltage = Math.max(...options.slice(0, options.length - i));
+        const maxJoltageIndex = options.indexOf(maxJoltage);
 
-    return maxJoltage * 10 + maxSecondJoltage;
+        totalJoltage += maxJoltage.toString();
+
+        logger.log(`(${i}) -> Options: ${options} | Max Joltage: ${maxJoltage} | Total Joltage: ${totalJoltage}`);
+
+        options = options.slice(maxJoltageIndex + 1);
+    }
+
+    return parseInt(totalJoltage, 10) || 0 ;
 }
 
 export function maxJoltageForBanks(banks: String[]): number {

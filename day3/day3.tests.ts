@@ -37,7 +37,7 @@ async function runTests() {
 
             const totalJoltage = maxJoltageForBanks(banks);
 
-            assert(totalJoltage === 357, `Expected total joltage to be 357, got ${totalJoltage}`);
+            assert(totalJoltage === 3121910778619, `Expected total joltage to be 3121910778619, got ${totalJoltage}`);
         });
     });
 }
