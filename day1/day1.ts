@@ -20,7 +20,7 @@ export class Rotation {
         }
 
         const direction = directionChar === "L" ? "left" : "right";
-        return new Rotation(code,direction, distance);
+        return new Rotation(code, direction, distance);
     }
 
     rotationValue(): number {
@@ -40,14 +40,14 @@ export class Dial {
         private readonly dialMax: number = 100
     ) {
         logger.log(`The dial starts by pointing at ${this.currentNumber}`);
-     }
+    }
 
-    rotate(rotation: Rotation): {newNumber:number, passedZero: number} {
+    rotate(rotation: Rotation): { newNumber: number, passedZero: number } {
         const startNumber = this.currentNumber;
         const rotationAmount = this.currentNumber + rotation.rotationValue();
 
         this.currentNumber = ((rotationAmount % this.dialMax) + this.dialMax) % this.dialMax;
-        
+
         let passedZero = Math.abs(Math.floor(rotationAmount / this.dialMax));
 
         if (rotation.direction === "left" && startNumber == 0) {
@@ -67,7 +67,7 @@ export function decryptPassword(dial: Dial = new Dial(), rotations: Rotation[]):
     let password: number = 0;
 
     for (let rotation of rotations) {
-        const { newNumber , passedZero} = dial.rotate(rotation);
+        const { newNumber, passedZero } = dial.rotate(rotation);
         if (newNumber === 0) password++;
     }
 
@@ -78,7 +78,7 @@ export function decryptPasswordUsingMethod0x434C49434B(dial: Dial = new Dial(), 
     let password: number = 0;
 
     for (let rotation of rotations) {
-        const { newNumber , passedZero} = dial.rotate(rotation);
+        const { newNumber, passedZero } = dial.rotate(rotation);
         if (newNumber === 0) password++;
         password += passedZero;
     }
