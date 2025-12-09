@@ -1,4 +1,4 @@
-import { fetchDayInputAndSave } from './inputfetcher.js';
+import { fetchDayInputAndSave } from '../utils/inputfetcher.js';
 
 const day = parseInt(process.argv[2], 10);
 

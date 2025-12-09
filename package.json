@@ -4,8 +4,8 @@
   "description": "Advent of Code 2025 Solutions",
   "type": "module",
   "scripts": {
-    "day1": "tsx day1.ts",
-    "fetch": "tsx fetch.ts"
+    "day1": "tsx day1/day1.ts",
+    "fetch": "tsx utils.fetch.ts"
   },
   "dependencies": {
     "tsx": "^4.19.2"

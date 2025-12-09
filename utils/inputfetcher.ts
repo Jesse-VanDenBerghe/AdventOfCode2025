@@ -1,7 +1,7 @@
 import fs from 'fs/promises';
 
 const dayInputEndpointTemplate = "https://adventofcode.com/2025/day/{day}/input"
-const outputFileTemplate = "./inputs/day{day}.txt"
+const outputFileTemplate = "./day{day}/day{day}.input.txt"
 
 let cachedSessionCookie: string | null = null;
 
@@ -38,9 +38,9 @@ async function fetchCookieFromSecrets(): Promise<string> {
 }
 
 async function saveInputToFile(day: number, input: string): Promise<void> {
-    const filePath = outputFileTemplate.replace("{day}", day.toString());
+    const filePath = outputFileTemplate.replaceAll("{day}", day.toString());
     
-    await fs.mkdir('./inputs', { recursive: true });
+    await fs.mkdir(`./day${day}`, { recursive: true });
     await fs.writeFile(filePath, input);
 }
 
