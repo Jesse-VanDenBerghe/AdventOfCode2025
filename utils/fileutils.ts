@@ -1,5 +1,5 @@
 import fs from 'fs/promises';
 
 export async function readFile(filePath: string): Promise<string> {
-    return fs.readFile(filePath, 'utf-8');
+    return (await fs.readFile(filePath, 'utf-8')).trim();
 }

@@ -78,45 +78,78 @@ function makeXConnections(vectors: Vector[], x: number): Map<string, number> {
     return connections;
 }
 
-function groupAsCircuits(vectors: Vector[], connections: Map<string, number>): Set<string>[] {
+function makeConnectionsUntilAllConnected(vectors: Vector[]): string {
+    const circuits = new Array<Set<string>>();
+    const vectorsToConnect = new Set<string>(vectors.map(v => v.asKey()));
+
+    const possibleConnections = calculatePossibleConnections(vectors);
+    let lastConnection: string | null = null;
+
+    while (vectorsToConnect.size > 0) {
+        console.clear();
+        console.log('Vectors left to connect:', Array.from(vectorsToConnect));
+        console.log('Current circuits:', circuits.map(circuit => Array.from(circuit)).length);
+        console.log('Possible connections left:', possibleConnections.size);
+
+        if(vectorsToConnect.size === 1) {
+            console.log('One pesky vector left:', Array.from(vectorsToConnect)[0]);
+        }
+
+        const closest = popClosestConnection(possibleConnections);
+        
+        pushConnectionToCircuits(closest![0], circuits);
+
+        const [vecKey1, vecKey2] = closest![0].split('-');
+        vectorsToConnect.delete(vecKey1);
+        vectorsToConnect.delete(vecKey2);
+
+        lastConnection = closest![0];
+    }
+
+    return lastConnection!;
+}
+
+function groupAsCircuits(connections: Map<string, number>): Set<string>[] {
     const circuits = new Array<Set<string>>();
 
     for (const connection of connections.keys()) {
-        const [vecKey1, vecKey2] = connection.split('-');
-
-        const matchedCircuits = circuits.filter(circuit => 
-            circuit.has(vecKey1) || circuit.has(vecKey2)
-        );
-
-        if (matchedCircuits.length === 0) {
-            const newCircuit = new Set<string>();
-            newCircuit.add(vecKey1);
-            newCircuit.add(vecKey2);
-            circuits.push(newCircuit);
-        } else if (matchedCircuits.length === 1) {
-            const circuit = matchedCircuits[0];
-            circuit.add(vecKey1);
-            circuit.add(vecKey2);
-        } else {
-            //merge circuits
-            const mergedCircuit = new Set<string>();
-            for (const circuit of matchedCircuits) {
-                for (const vec of circuit) {
-                    mergedCircuit.add(vec);
-                }
-                const index = circuits.indexOf(circuit);
-                if (index > -1) {
-                    circuits.splice(index, 1);
-                }
-            }
-            mergedCircuit.add(vecKey1);
-            mergedCircuit.add(vecKey2);
-            circuits.push(mergedCircuit);
-        }
-
+        pushConnectionToCircuits(connection, circuits);
     }
 
     return circuits.sort((a, b) => b.size - a.size);
+}
+
+function pushConnectionToCircuits(connection: string, circuits: Set<string>[]) {
+    const [vecKey1, vecKey2] = connection.split('-');
+
+    const matchedCircuits = circuits.filter(circuit => circuit.has(vecKey1) || circuit.has(vecKey2)
+    );
+
+    if (matchedCircuits.length === 0) {
+        const newCircuit = new Set<string>();
+        newCircuit.add(vecKey1);
+        newCircuit.add(vecKey2);
+        circuits.push(newCircuit);
+    } else if (matchedCircuits.length === 1) {
+        const circuit = matchedCircuits[0];
+        circuit.add(vecKey1);
+        circuit.add(vecKey2);
+    } else {
+        //merge circuits
+        const mergedCircuit = new Set<string>();
+        for (const circuit of matchedCircuits) {
+            for (const vec of circuit) {
+                mergedCircuit.add(vec);
+            }
+            const index = circuits.indexOf(circuit);
+            if (index > -1) {
+                circuits.splice(index, 1);
+            }
+        }
+        mergedCircuit.add(vecKey1);
+        mergedCircuit.add(vecKey2);
+        circuits.push(mergedCircuit);
+    }
 }
 
 function multiply3LargestCircuits(circuits: Set<string>[]): number {
@@ -138,7 +171,7 @@ async function day8() {
         const connections = makeXConnections(vectors, 1000);
         console.log('Connections:', connections);
 
-        const circuits = groupAsCircuits(vectors, connections);
+        const circuits = groupAsCircuits(connections);
         console.log('Circuits:', circuits.map(circuit => Array.from(circuit)));
 
         const product = multiply3LargestCircuits(circuits);
@@ -146,4 +179,20 @@ async function day8() {
     });
 }
 
-day8();
+async function day8p2() {
+    readFile('day8/day8.input.txt').then((data) => {
+        const vectors = data.split('\n').map(line => Vector.fromString(line.trim()));
+
+        console.log('Vectors:', vectors.map(v => v.asKey()));
+
+        const lastConnection = makeConnectionsUntilAllConnected(vectors);
+        console.log('Last connection made to connect all vectors:', lastConnection);
+
+        const [x1, x2] = lastConnection.split('-').map(s => Vector.fromString(s).x);
+        console.log('X coordinates of last connected vectors:', x1, x2);
+
+        const product = x1 * x2;
+        console.log('Product of X coordinates of last connected vectors:', product);
+    });
+}
+day8p2();
